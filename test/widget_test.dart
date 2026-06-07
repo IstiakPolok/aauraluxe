@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
@@ -123,6 +124,12 @@ void main() {
     Get.put(AuthController());
     Get.put(CartController());
     Get.put(HomeController());
+
+    // Configure mobile screen size for layout testing
+    tester.view.physicalSize = const Size(375, 812);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
 
     // 3. Build our app and trigger a frame.
     await tester.pumpWidget(const AuraLuxeApp());

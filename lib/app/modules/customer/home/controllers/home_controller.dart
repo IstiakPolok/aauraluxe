@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:aauraluxe/app/data/models/models.dart';
 import 'package:aauraluxe/app/data/providers/product_api.dart';
@@ -24,11 +25,21 @@ class HomeController extends GetxController {
     'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1200&q=80', // Luxury fashion
   ];
 
+  final ScrollController newProductsScrollController = ScrollController();
+  final ScrollController topSellingScrollController = ScrollController();
+
   @override
   void onInit() {
     super.onInit();
     loadCategories();
     loadProducts();
+  }
+
+  @override
+  void onClose() {
+    newProductsScrollController.dispose();
+    topSellingScrollController.dispose();
+    super.onClose();
   }
 
   Future<void> loadCategories() async {
