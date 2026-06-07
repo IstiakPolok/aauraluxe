@@ -1,0 +1,90 @@
+﻿Analyzing aauraluxe...                                          
+
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\core\theme.dart:45:31 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\core\theme.dart:54:31 - deprecated_member_use
+   info - 'background' is deprecated and shouldn't be used. Use surface instead. This feature was deprecated after v3.18.0-0.1.pre - lib\app\core\theme.dart:70:9 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\app\data\providers\activity_log_api.dart:32:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\app\data\providers\order_api.dart:69:13 - avoid_print
+   info - Don't invoke 'print' in production code - lib\app\modules\admin\activity_logs\controllers\admin_logs_controller.dart:33:7 - avoid_print
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\app\modules\admin\activity_logs\views\admin_logs_view.dart:109:11 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\activity_logs\views\admin_logs_view.dart:257:25 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\activity_logs\views\admin_logs_view.dart:261:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\activity_logs\views\admin_logs_view.dart:265:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\activity_logs\views\admin_logs_view.dart:269:26 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\app\modules\admin\categories\controllers\admin_categories_controller.dart:25:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\app\modules\admin\dashboard\controllers\admin_dashboard_controller.dart:53:7 - avoid_print
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\dashboard\views\admin_dashboard_view.dart:481:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\dashboard\views\admin_dashboard_view.dart:485:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\dashboard\views\admin_dashboard_view.dart:489:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\dashboard\views\admin_dashboard_view.dart:493:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\dashboard\views\admin_dashboard_view.dart:497:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\dashboard\views\admin_dashboard_view.dart:501:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\dashboard\views\admin_dashboard_view.dart:505:25 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\dashboard\views\admin_dashboard_view.dart:509:26 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\app\modules\admin\orders\controllers\admin_orders_controller.dart:31:7 - avoid_print
+warning - The value of the local variable 'updated' isn't used - lib\app\modules\admin\orders\controllers\admin_orders_controller.dart:50:13 - unused_local_variable
+warning - Unused import: 'package:aauraluxe/app/data/models/models.dart' - lib\app\modules\admin\orders\views\admin_orders_view.dart:6:8 - unused_import
+warning - The value of the local variable 'itemsCount' isn't used - lib\app\modules\admin\orders\views\admin_orders_view.dart:137:17 - unused_local_variable
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\app\modules\admin\orders\views\admin_orders_view.dart:209:35 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\orders\views\admin_orders_view.dart:275:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\orders\views\admin_orders_view.dart:279:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\orders\views\admin_orders_view.dart:283:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\orders\views\admin_orders_view.dart:287:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\orders\views\admin_orders_view.dart:291:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\orders\views\admin_orders_view.dart:295:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\orders\views\admin_orders_view.dart:299:25 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\admin\orders\views\admin_orders_view.dart:303:26 - deprecated_member_use
+warning - Unused import: 'package:flutter/material.dart' - lib\app\modules\admin\products\controllers\admin_products_controller.dart:1:8 - unused_import
+   info - Don't invoke 'print' in production code - lib\app\modules\admin\products\controllers\admin_products_controller.dart:29:7 - avoid_print
+   info - 'value' is deprecated and shouldn't be used. Use initialValue instead. This will set the initial value for the form field. This feature was deprecated after v3.33.0-1.0.pre - lib\app\modules\admin\products\views\admin_products_view.dart:276:27 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\app\modules\customer\cart\controllers\cart_controller.dart:48:9 - avoid_print
+   info - 'groupValue' is deprecated and shouldn't be used. Use a RadioGroup ancestor to manage group value instead. This feature was deprecated after v3.32.0-0.0.pre - lib\app\modules\customer\checkout\views\checkout_view.dart:145:19 - deprecated_member_use
+   info - 'onChanged' is deprecated and shouldn't be used. Use RadioGroup to handle value change instead. This feature was deprecated after v3.32.0-0.0.pre - lib\app\modules\customer\checkout\views\checkout_view.dart:147:19 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\app\modules\customer\home\controllers\home_controller.dart:40:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\app\modules\customer\home\controllers\home_controller.dart:56:7 - avoid_print
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\home\views\home_view.dart:207:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\home\views\home_view.dart:380:45 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\app\modules\customer\order_history\controllers\order_history_controller.dart:28:7 - avoid_print
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_history\views\order_history_view.dart:164:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_history\views\order_history_view.dart:168:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_history\views\order_history_view.dart:172:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_history\views\order_history_view.dart:176:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_history\views\order_history_view.dart:180:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_history\views\order_history_view.dart:184:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_history\views\order_history_view.dart:188:25 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_history\views\order_history_view.dart:192:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_tracking\views\order_tracking_view.dart:212:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_tracking\views\order_tracking_view.dart:214:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_tracking\views\order_tracking_view.dart:320:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_tracking\views\order_tracking_view.dart:324:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_tracking\views\order_tracking_view.dart:328:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_tracking\views\order_tracking_view.dart:332:28 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_tracking\views\order_tracking_view.dart:336:26 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_tracking\views\order_tracking_view.dart:340:27 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_tracking\views\order_tracking_view.dart:344:25 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\order_tracking\views\order_tracking_view.dart:348:26 - deprecated_member_use
+   info - Don't invoke 'print' in production code - lib\app\modules\customer\product_details\controllers\product_details_controller.dart:36:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\app\modules\customer\product_details\controllers\product_details_controller.dart:50:7 - avoid_print
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\product_details\views\product_details_view.dart:225:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\customer\product_details\views\product_details_view.dart:225:95 - deprecated_member_use
+   info - The constant name 'INITIAL' isn't a lowerCamelCase identifier - lib\app\routes\app_pages.dart:95:16 - constant_identifier_names
+   info - The constant name 'LOGIN' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:2:23 - constant_identifier_names
+   info - The constant name 'CUSTOMER_HOME' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:5:23 - constant_identifier_names
+   info - The constant name 'PRODUCT_DETAILS' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:6:23 - constant_identifier_names
+   info - The constant name 'CART' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:7:23 - constant_identifier_names
+   info - The constant name 'CHECKOUT' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:8:23 - constant_identifier_names
+   info - The constant name 'ORDER_TRACKING' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:9:23 - constant_identifier_names
+   info - The constant name 'ORDER_HISTORY' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:10:23 - constant_identifier_names
+   info - The constant name 'ADMIN_DASHBOARD' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:13:23 - constant_identifier_names
+   info - The constant name 'ADMIN_PRODUCTS' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:14:23 - constant_identifier_names
+   info - The constant name 'ADMIN_ORDERS' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:15:23 - constant_identifier_names
+   info - The constant name 'ADMIN_CATEGORIES' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:16:23 - constant_identifier_names
+   info - The constant name 'ADMIN_LOGS' isn't a lowerCamelCase identifier - lib\app\routes\app_routes.dart:17:23 - constant_identifier_names
+
+flutter : 80 issues found. (ran in 1.8s)
+At line:1 char:1
++ flutter analyze *>&1 | Out-File -FilePath analyze_output3.txt -Encodi ...
++ ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (80 issues found. (ran in 1.8s):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
