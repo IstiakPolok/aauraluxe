@@ -28,7 +28,13 @@ class AdminCategoriesController extends GetxController {
     }
   }
 
-  Future<void> saveCategory({String? id, required String name, String? description}) async {
+  Future<void> saveCategory({
+    String? id,
+    required String name,
+    String? description,
+    bool isSpecial = false,
+    String? specialColor,
+  }) async {
     isLoading.value = true;
     try {
       final Category cat = Category(
@@ -36,6 +42,8 @@ class AdminCategoriesController extends GetxController {
         name: name,
         description: description,
         createdAt: DateTime.now(),
+        isSpecial: isSpecial,
+        specialColor: specialColor ?? '#E91E63',
       );
 
       Category result;

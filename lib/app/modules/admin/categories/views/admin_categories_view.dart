@@ -92,7 +92,30 @@ class AdminCategoriesView extends GetView<AdminCategoriesController> {
           final cat = controller.categories[index];
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: AppTheme.s20, vertical: AppTheme.s8),
-            title: Text(cat.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            title: Row(
+              children: [
+                Text(cat.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                if (cat.isSpecial) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Color(int.parse(cat.specialColor!.replaceFirst('#', '0xff'))).withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Color(int.parse(cat.specialColor!.replaceFirst('#', '0xff')))),
+                    ),
+                    child: Text(
+                      'SPECIAL',
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        color: Color(int.parse(cat.specialColor!.replaceFirst('#', '0xff'))),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
             subtitle: cat.description != null && cat.description!.isNotEmpty
                 ? Padding(
                     padding: const EdgeInsets.only(top: 4.0),
@@ -122,51 +145,115 @@ class AdminCategoriesView extends GetView<AdminCategoriesController> {
     final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController(text: category?.name ?? '');
     final descController = TextEditingController(text: category?.description ?? '');
+    
+    bool isSpecial = category?.isSpecial ?? false;
+    String specialColor = category?.specialColor ?? '#E91E63';
+
+    final presetColors = [
+      {'name': 'Pink (Deals)', 'hex': '#E91E63'},
+      {'name': 'Emerald (New)', 'hex': '#00A86B'},
+      {'name': 'Teal (Combos)', 'hex': '#008080'},
+      {'name': 'Purple (Luxury)', 'hex': '#673AB7'},
+      {'name': 'Amber (Offers)', 'hex': '#FFC107'},
+      {'name': 'Indigo (Premium)', 'hex': '#3F51B5'},
+    ];
 
     Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(category == null ? 'Add Category' : 'Edit Category'),
-        content: SizedBox(
-          width: 400,
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Category Name', hintText: 'e.g. Shoes'),
-                  validator: (v) => v?.trim().isEmpty == true ? 'Required' : null,
+      StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            title: Text(category == null ? 'Add Category' : 'Edit Category'),
+            content: SizedBox(
+              width: 400,
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      controller: nameController,
+                      decoration: const InputDecoration(labelText: 'Category Name', hintText: 'e.g. Shoes'),
+                      validator: (v) => v?.trim().isEmpty == true ? 'Required' : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: descController,
+                      maxLines: 2,
+                      decoration: const InputDecoration(labelText: 'Description (Optional)', hintText: 'Collection of luxury items...'),
+                    ),
+                    const SizedBox(height: 16),
+                    SwitchListTile(
+                      title: const Text('Special Category (Deals, Combos)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                      subtitle: const Text('Highlighted with custom styling', style: TextStyle(fontSize: 12)),
+                      contentPadding: EdgeInsets.zero,
+                      value: isSpecial,
+                      activeColor: AppTheme.primary,
+                      onChanged: (val) {
+                        setState(() {
+                          isSpecial = val;
+                        });
+                      },
+                    ),
+                    if (isSpecial) ...[
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(labelText: 'Special Theme Color'),
+                        value: specialColor,
+                        items: presetColors.map((color) {
+                          return DropdownMenuItem<String>(
+                            value: color['hex'],
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 16,
+                                  height: 16,
+                                  decoration: BoxDecoration(
+                                    color: Color(int.parse(color['hex']!.replaceFirst('#', '0xff'))),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(color['name']!),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              specialColor = val;
+                            });
+                          }
+                        },
+                      ),
+                    ],
+                  ],
                 ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: descController,
-                  maxLines: 3,
-                  decoration: const InputDecoration(labelText: 'Description (Optional)', hintText: 'Collection of luxury items...'),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel', style: TextStyle(color: Colors.black)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (!formKey.currentState!.validate()) return;
-              controller.saveCategory(
-                id: category?.id,
-                name: nameController.text.trim(),
-                description: descController.text.trim().isEmpty ? null : descController.text.trim(),
-              );
-              Get.back();
-            },
-            child: const Text('Save'),
-          ),
-        ],
+            actions: [
+              TextButton(
+                onPressed: () => Get.back(),
+                child: const Text('Cancel', style: TextStyle(color: Colors.black)),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (!formKey.currentState!.validate()) return;
+                  controller.saveCategory(
+                    id: category?.id,
+                    name: nameController.text.trim(),
+                    description: descController.text.trim().isEmpty ? null : descController.text.trim(),
+                    isSpecial: isSpecial,
+                    specialColor: specialColor,
+                  );
+                  Get.back();
+                },
+                child: const Text('Save'),
+              ),
+            ],
+          );
+        }
       ),
     );
   }

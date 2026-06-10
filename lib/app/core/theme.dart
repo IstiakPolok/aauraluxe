@@ -3,21 +3,21 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   // Brand Colors
-  static const Color background = Color(0xFFF5F5F7);
+  static const Color background = Color(0xFFF5F5F5);
   static const Color surface = Colors.white;
-  static const Color primary = Color(0xFF1D1D1F); // Clean charcoal
-  static const Color accent = Color(0xFF0071E3);  // Apple Blue
+  static const Color primary = Color(0xFF008A3C); // Forest Green
+  static const Color accent = Color(0xFFFF9800);  // Bright Orange
   
-  static const Color textPrimary = Color(0xFF1D1D1F);
-  static const Color textSecondary = Color(0xFF86868B);
+  static const Color textPrimary = Color(0xFF212121); // Dark Gray
+  static const Color textSecondary = Color(0xFF757575);
   static const Color textLight = Color(0xFFE5E5EA);
   
-  static const Color border = Color(0xFFE5E5EA);
-  static const Color divider = Color(0xFFD2D2D7);
+  static const Color border = Color(0xFFE0E0E0);
+  static const Color divider = Color(0xFFEEEEEE);
   
   static const Color success = Color(0xFF34C759);
   static const Color warning = Color(0xFFFF9500);
-  static const Color error = Color(0xFFFF3B30);
+  static const Color error = Color(0xFFD32F2F);
 
   // Spacing System (8px Grid)
   static const double s4 = 4.0;

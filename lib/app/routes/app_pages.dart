@@ -11,6 +11,7 @@ import '../modules/customer/cart/views/cart_view.dart';
 import '../modules/customer/checkout/views/checkout_view.dart';
 import '../modules/customer/order_tracking/views/order_tracking_view.dart';
 import '../modules/customer/order_history/views/order_history_view.dart';
+import '../modules/customer/category_products/views/category_products_view.dart';
 
 import '../modules/admin/dashboard/views/admin_dashboard_view.dart';
 import '../modules/admin/products/views/admin_products_view.dart';
@@ -26,6 +27,7 @@ import '../modules/customer/cart/bindings/cart_binding.dart';
 import '../modules/customer/checkout/bindings/checkout_binding.dart';
 import '../modules/customer/order_tracking/bindings/order_tracking_binding.dart';
 import '../modules/customer/order_history/bindings/order_history_binding.dart';
+import '../modules/customer/category_products/bindings/category_products_binding.dart';
 
 import '../modules/admin/dashboard/bindings/admin_dashboard_binding.dart';
 import '../modules/admin/products/bindings/admin_products_binding.dart';
@@ -111,6 +113,11 @@ class AppPages {
       name: AppRoutes.PRODUCT_DETAILS,
       page: () => const ProductDetailsView(),
       binding: ProductDetailsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.CATEGORY_PRODUCTS,
+      page: () => const CategoryProductsView(),
+      binding: CategoryProductsBinding(),
     ),
     GetPage(
       name: AppRoutes.CART,

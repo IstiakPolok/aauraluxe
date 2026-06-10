@@ -12,6 +12,7 @@ import '../../products/views/admin_products_view.dart';
 import '../../categories/views/admin_categories_view.dart';
 import '../../orders/views/admin_orders_view.dart';
 import '../../activity_logs/views/admin_logs_view.dart';
+import '../../banners/views/admin_banners_view.dart';
 
 class AdminDashboardView extends GetView<AdminDashboardController> {
   const AdminDashboardView({super.key});
@@ -27,7 +28,11 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
       const AdminProductsView(),
       const AdminCategoriesView(),
       const AdminOrdersView(),
-      if (isSuperAdmin) const AdminLogsView() else const Center(child: Text('Unauthorized access')),
+      const AdminBannersView(),
+      if (isSuperAdmin)
+        const AdminLogsView()
+      else
+        const Center(child: Text('Unauthorized access')),
     ];
 
     final List<Map<String, dynamic>> menuItems = [
@@ -35,7 +40,9 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
       {'title': 'Products', 'icon': Icons.inventory_2_outlined},
       {'title': 'Categories', 'icon': Icons.category_outlined},
       {'title': 'Orders', 'icon': Icons.shopping_bag_outlined},
-      if (isSuperAdmin) {'title': 'Activity Logs', 'icon': Icons.history_edu_outlined},
+      {'title': 'Banners', 'icon': Icons.view_carousel_outlined},
+      if (isSuperAdmin)
+        {'title': 'Activity Logs', 'icon': Icons.history_edu_outlined},
     ];
 
     return ResponsiveLayout(
@@ -46,11 +53,19 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
   }
 
   // --- MOBILE LAYOUT (Bottom Navigation) ---
-  Widget _buildMobileLayout(BuildContext context, List<Widget> panels, List<Map<String, dynamic>> menuItems) {
+  Widget _buildMobileLayout(
+    BuildContext context,
+    List<Widget> panels,
+    List<Map<String, dynamic>> menuItems,
+  ) {
     return Scaffold(
       backgroundColor: AppTheme.background,
       appBar: AppBar(
-        title: Obx(() => Text(menuItems[controller.currentTabIndex.value]['title'] as String)),
+        title: Obx(
+          () => Text(
+            menuItems[controller.currentTabIndex.value]['title'] as String,
+          ),
+        ),
         backgroundColor: Colors.white,
         actions: [
           IconButton(
@@ -61,32 +76,44 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
         ],
       ),
       body: Obx(() => panels[controller.currentTabIndex.value]),
-      bottomNavigationBar: Obx(() => BottomNavigationBar(
-            currentIndex: controller.currentTabIndex.value,
-            onTap: (idx) => controller.switchTab(idx),
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: AppTheme.primary,
-            unselectedItemColor: AppTheme.textSecondary,
-            backgroundColor: Colors.white,
-            items: menuItems
-                .map((item) => BottomNavigationBarItem(
-                      icon: Icon(item['icon'] as IconData),
-                      label: item['title'] as String,
-                    ))
-                .toList(),
-          )),
+      bottomNavigationBar: Obx(
+        () => BottomNavigationBar(
+          currentIndex: controller.currentTabIndex.value,
+          onTap: (idx) => controller.switchTab(idx),
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: AppTheme.primary,
+          unselectedItemColor: AppTheme.textSecondary,
+          backgroundColor: Colors.white,
+          items: menuItems
+              .map(
+                (item) => BottomNavigationBarItem(
+                  icon: Icon(item['icon'] as IconData),
+                  label: item['title'] as String,
+                ),
+              )
+              .toList(),
+        ),
+      ),
     );
   }
 
   // --- TABLET LAYOUT (Side Drawer Navigation) ---
-  Widget _buildTabletLayout(BuildContext context, List<Widget> panels, List<Map<String, dynamic>> menuItems) {
+  Widget _buildTabletLayout(
+    BuildContext context,
+    List<Widget> panels,
+    List<Map<String, dynamic>> menuItems,
+  ) {
     final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: AppTheme.background,
       appBar: AppBar(
-        title: Obx(() => Text(menuItems[controller.currentTabIndex.value]['title'] as String)),
+        title: Obx(
+          () => Text(
+            menuItems[controller.currentTabIndex.value]['title'] as String,
+          ),
+        ),
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () => scaffoldKey.currentState?.openDrawer(),
@@ -108,14 +135,24 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                 children: List.generate(menuItems.length, (index) {
                   final item = menuItems[index];
                   return Obx(() {
-                    final isSelected = controller.currentTabIndex.value == index;
+                    final isSelected =
+                        controller.currentTabIndex.value == index;
                     return ListTile(
-                      leading: Icon(item['icon'] as IconData, color: isSelected ? AppTheme.accent : AppTheme.textSecondary),
+                      leading: Icon(
+                        item['icon'] as IconData,
+                        color: isSelected
+                            ? AppTheme.accent
+                            : AppTheme.textSecondary,
+                      ),
                       title: Text(
                         item['title'] as String,
                         style: TextStyle(
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                          color: isSelected ? AppTheme.accent : AppTheme.textPrimary,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: isSelected
+                              ? AppTheme.accent
+                              : AppTheme.textPrimary,
                         ),
                       ),
                       selected: isSelected,
@@ -136,7 +173,11 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
   }
 
   // --- DESKTOP LAYOUT (Permanent Sidebar + Topbar) ---
-  Widget _buildDesktopLayout(BuildContext context, List<Widget> panels, List<Map<String, dynamic>> menuItems) {
+  Widget _buildDesktopLayout(
+    BuildContext context,
+    List<Widget> panels,
+    List<Map<String, dynamic>> menuItems,
+  ) {
     final AuthController authController = Get.find<AuthController>();
 
     return Scaffold(
@@ -148,7 +189,9 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
             width: 250,
             decoration: const BoxDecoration(
               color: Colors.white,
-              border: Border(right: BorderSide(color: AppTheme.border, width: 1)),
+              border: Border(
+                right: BorderSide(color: AppTheme.border, width: 1),
+              ),
             ),
             child: Column(
               children: [
@@ -160,24 +203,42 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                     itemBuilder: (context, index) {
                       final item = menuItems[index];
                       return Obx(() {
-                        final isSelected = controller.currentTabIndex.value == index;
+                        final isSelected =
+                            controller.currentTabIndex.value == index;
                         return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: AppTheme.s12, vertical: AppTheme.s4),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: AppTheme.s12,
+                            vertical: AppTheme.s4,
+                          ),
                           decoration: BoxDecoration(
-                            color: isSelected ? AppTheme.background : Colors.transparent,
+                            color: isSelected
+                                ? AppTheme.background
+                                : Colors.transparent,
                             borderRadius: AppTheme.borderMedium,
                           ),
                           child: ListTile(
-                            leading: Icon(item['icon'] as IconData, color: isSelected ? AppTheme.primary : AppTheme.textSecondary, size: 20),
+                            leading: Icon(
+                              item['icon'] as IconData,
+                              color: isSelected
+                                  ? AppTheme.primary
+                                  : AppTheme.textSecondary,
+                              size: 20,
+                            ),
                             title: Text(
                               item['title'] as String,
                               style: TextStyle(
                                 fontSize: 14,
-                                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                                color: isSelected ? AppTheme.textPrimary : AppTheme.textSecondary,
+                                fontWeight: isSelected
+                                    ? FontWeight.w600
+                                    : FontWeight.normal,
+                                color: isSelected
+                                    ? AppTheme.textPrimary
+                                    : AppTheme.textSecondary,
                               ),
                             ),
-                            shape: RoundedRectangleBorder(borderRadius: AppTheme.borderMedium),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: AppTheme.borderMedium,
+                            ),
                             onTap: () => controller.switchTab(index),
                           ),
                         );
@@ -190,14 +251,21 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                   padding: const EdgeInsets.all(AppTheme.s16),
                   child: TextButton.icon(
                     onPressed: () => authController.logout(),
-                    icon: const Icon(Icons.logout, color: AppTheme.error, size: 18),
-                    label: const Text('Sign Out', style: TextStyle(color: AppTheme.error, fontSize: 13)),
+                    icon: const Icon(
+                      Icons.logout,
+                      color: AppTheme.error,
+                      size: 18,
+                    ),
+                    label: const Text(
+                      'Sign Out',
+                      style: TextStyle(color: AppTheme.error, fontSize: 13),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          
+
           // Main Body Area
           Expanded(
             child: Column(
@@ -207,24 +275,42 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                   height: 70,
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    border: Border(bottom: BorderSide(color: AppTheme.border, width: 1)),
+                    border: Border(
+                      bottom: BorderSide(color: AppTheme.border, width: 1),
+                    ),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: AppTheme.s32),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Obx(() => Text(
-                            menuItems[controller.currentTabIndex.value]['title'] as String,
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                          )),
+                      Obx(
+                        () => Text(
+                          menuItems[controller.currentTabIndex.value]['title']
+                              as String,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                       Row(
                         children: [
                           OutlinedButton.icon(
-                            onPressed: () => Get.offAllNamed(AppRoutes.CUSTOMER_HOME),
-                            icon: const Icon(Icons.storefront_outlined, size: 16),
-                            label: const Text('View Storefront', style: TextStyle(fontSize: 12)),
+                            onPressed: () =>
+                                Get.offAllNamed(AppRoutes.CUSTOMER_HOME),
+                            icon: const Icon(
+                              Icons.storefront_outlined,
+                              size: 16,
+                            ),
+                            label: const Text(
+                              'View Storefront',
+                              style: TextStyle(fontSize: 12),
+                            ),
                             style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
                             ),
                           ),
                           const SizedBox(width: AppTheme.s24),
@@ -232,23 +318,37 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text(authController.profile?.email ?? 'Admin User', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                              Text((authController.profile?.role ?? 'admin').toUpperCase(), style: const TextStyle(fontSize: 10, color: AppTheme.textSecondary, letterSpacing: 0.5)),
+                              Text(
+                                authController.profile?.email ?? 'Admin User',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              Text(
+                                (authController.profile?.role ?? 'admin')
+                                    .toUpperCase(),
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: AppTheme.textSecondary,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
                             ],
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
-                
+
                 // Active panel
                 Expanded(
                   child: Obx(() => panels[controller.currentTabIndex.value]),
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
@@ -284,7 +384,9 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
   // --- OVERVIEW TAB CONTENT (Common between all layouts) ---
   Widget _buildOverviewTab(BuildContext context) {
     final isDesktop = MediaQuery.of(context).size.width >= 1024;
-    final padding = isDesktop ? const EdgeInsets.all(AppTheme.s32) : const EdgeInsets.all(AppTheme.s16);
+    final padding = isDesktop
+        ? const EdgeInsets.all(AppTheme.s32)
+        : const EdgeInsets.all(AppTheme.s16);
 
     return Scaffold(
       backgroundColor: AppTheme.background,
@@ -308,7 +410,11 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                 // Recent Orders List Table
                 const Text(
                   'Recent Orders',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textPrimary,
+                  ),
                 ),
                 const SizedBox(height: AppTheme.s16),
                 _buildRecentOrdersTable(context),
@@ -327,10 +433,10 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
 
     if (width >= 1024) {
       crossAxisCount = 4;
-      childAspectRatio = 1.6;
+      childAspectRatio = 1.3;
     } else if (width >= 600) {
       crossAxisCount = 2;
-      childAspectRatio = 2.0;
+      childAspectRatio = 1.6;
     }
 
     return GridView.count(
@@ -381,7 +487,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.all(AppTheme.s20),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: AppTheme.borderMedium,
@@ -395,14 +501,31 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(title, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13, fontWeight: FontWeight.w500)),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: AppTheme.textSecondary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
               Icon(icon, color: color, size: 22),
             ],
           ),
           const SizedBox(height: AppTheme.s8),
-          Text(value, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.textPrimary,
+            ),
+          ),
           const SizedBox(height: AppTheme.s4),
-          Text(subtitle, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+          Text(
+            subtitle,
+            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+          ),
         ],
       ),
     );
@@ -418,7 +541,10 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
           border: Border.all(color: AppTheme.border),
         ),
         alignment: Alignment.center,
-        child: const Text('No orders placed yet.', style: TextStyle(color: AppTheme.textSecondary)),
+        child: const Text(
+          'No orders placed yet.',
+          style: TextStyle(color: AppTheme.textSecondary),
+        ),
       );
     }
 
@@ -433,23 +559,33 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: controller.recentOrders.length,
-        separatorBuilder: (context, index) => const Divider(color: AppTheme.border, height: 1),
+        separatorBuilder: (context, index) =>
+            const Divider(color: AppTheme.border, height: 1),
         itemBuilder: (context, index) {
           final order = controller.recentOrders[index];
           final date = DateFormat('MMM dd, yyyy').format(order.createdAt);
-          
+
           return ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: AppTheme.s20, vertical: AppTheme.s8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.s20,
+              vertical: AppTheme.s8,
+            ),
             title: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Order #${order.id}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
                 Text(
                   '\$${order.totalAmount.toStringAsFixed(2)}',
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
                 ),
               ],
             ),
@@ -458,7 +594,13 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('${order.customerName} • $date', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                  Text(
+                    '${order.customerName} • $date',
+                    style: const TextStyle(
+                      color: AppTheme.textSecondary,
+                      fontSize: 12,
+                    ),
+                  ),
                   _buildStatusChip(order.status),
                 ],
               ),
@@ -509,7 +651,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
         bg = Colors.grey.withOpacity(0.12);
         fg = Colors.grey[800]!;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
@@ -518,7 +660,12 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
       ),
       child: Text(
         status.toUpperCase(),
-        style: TextStyle(color: fg, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 0.5),
+        style: TextStyle(
+          color: fg,
+          fontSize: 9,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
