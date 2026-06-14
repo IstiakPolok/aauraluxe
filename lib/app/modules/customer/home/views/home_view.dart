@@ -729,7 +729,7 @@ class HomeView extends GetView<HomeController> {
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount,
-          childAspectRatio: 0.6,
+          childAspectRatio: 0.54,
           crossAxisSpacing: 12,
           mainAxisSpacing: 12,
         ),

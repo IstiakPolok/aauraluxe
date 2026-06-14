@@ -91,9 +91,9 @@ class ChardikeProductCard extends StatelessWidget {
               ),
             ),
             Expanded(
-              flex: 4,
+              flex: 5,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -138,18 +138,18 @@ class ChardikeProductCard extends StatelessWidget {
                             ),
                           ),
                         ],
-                        const SizedBox(height: 2),
+                        const SizedBox(height: 1),
                         Row(
                           children: [
                             const Icon(Icons.star, color: AppTheme.accent, size: 10),
                             const SizedBox(width: 2),
                             Text(
-                              '5.0',
+                              product.rating.toStringAsFixed(1),
                               style: const TextStyle(fontSize: 10, color: AppTheme.textSecondary),
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              '${product.stock + 100} Sold',
+                              '${product.soldCount} Sold',
                               style: const TextStyle(fontSize: 10, color: AppTheme.textSecondary),
                             ),
                           ],
@@ -176,7 +176,9 @@ class ChardikeProductCard extends StatelessWidget {
                           foregroundColor: AppTheme.primary,
                           side: const BorderSide(color: AppTheme.primary),
                           elevation: 0,
-                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          padding: const EdgeInsets.symmetric(vertical: 0),
+                          minimumSize: const Size(0, 28),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4),
                           ),

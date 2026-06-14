@@ -24,7 +24,9 @@ class _SearchDropdownFieldState extends State<SearchDropdownField> {
   final LayerLink _layerLink = LayerLink();
   final TextEditingController _textController = TextEditingController();
   OverlayEntry? _overlayEntry;
-  final HomeController controller = Get.find<HomeController>();
+  final HomeController controller = Get.isRegistered<HomeController>()
+      ? Get.find<HomeController>()
+      : Get.put(HomeController());
 
   @override
   void initState() {

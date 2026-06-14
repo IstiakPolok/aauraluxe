@@ -27,6 +27,24 @@ class Product {
   bool get hasDiscount => discountPrice != null && discountPrice! < price;
   bool get isOutOfStock => stock <= 0;
 
+  double get rating {
+    if (id.isEmpty) return 4.8;
+    int sum = 0;
+    for (int i = 0; i < id.length; i++) {
+      sum += id.codeUnitAt(i);
+    }
+    return 4.3 + (sum % 8) * 0.1;
+  }
+
+  int get soldCount {
+    if (id.isEmpty) return 50;
+    int sum = 0;
+    for (int i = 0; i < id.length; i++) {
+      sum += id.codeUnitAt(i);
+    }
+    return 25 + (sum % 426);
+  }
+
   factory Product.fromJson(Map<String, dynamic> json) {
     // Parse list of image URLs safely from text[] database format
     List<String> urls = [];
