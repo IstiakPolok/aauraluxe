@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:aauraluxe/app/data/models/models.dart';
 import 'package:aauraluxe/app/data/providers/product_api.dart';
 import 'package:aauraluxe/app/data/providers/activity_log_api.dart';
@@ -110,5 +111,59 @@ class AdminProductsController extends GetxController {
   // Handle local file selection mock and upload it
   Future<String> uploadImage(String name, List<int> bytes, String mime) async {
     return await _productApi.uploadProductImage(name, bytes, mime);
+  }
+
+  // Pick image and upload, returning public URL
+  Future<String?> uploadImageFromDevice() async {
+    try {
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        withData: true,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+        final bytes = file.bytes;
+        if (bytes != null) {
+          final fileName = 'product_${DateTime.now().millisecondsSinceEpoch}_${file.name}';
+          final mime = file.extension == 'png' ? 'image/png' : 'image/jpeg';
+          isLoading.value = true;
+          final uploadedUrl = await uploadImage(fileName, bytes, mime);
+          return uploadedUrl;
+        }
+      }
+    } catch (e) {
+      Get.snackbar('Upload Error', 'Failed to upload product image: $e', snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
+    return null;
+  }
+
+  // Pick and upload image from device
+  Future<String?> pickAndUploadImage() async {
+    try {
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        withData: true,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+        final bytes = file.bytes;
+        if (bytes != null) {
+          final fileName = 'product_${DateTime.now().millisecondsSinceEpoch}_${file.name}';
+          final mime = file.extension == 'png' ? 'image/png' : 'image/jpeg';
+          isLoading.value = true;
+          final uploadedUrl = await _productApi.uploadProductImage(fileName, bytes, mime);
+          return uploadedUrl;
+        }
+      }
+    } catch (e) {
+      Get.snackbar('Upload Error', 'Failed to upload product image: $e', snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
+    return null;
   }
 }

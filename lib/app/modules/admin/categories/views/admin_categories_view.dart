@@ -92,6 +92,31 @@ class AdminCategoriesView extends GetView<AdminCategoriesController> {
           final cat = controller.categories[index];
           return ListTile(
             contentPadding: const EdgeInsets.symmetric(horizontal: AppTheme.s20, vertical: AppTheme.s8),
+            leading: cat.categoryImageUrl != null && cat.categoryImageUrl!.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: AppTheme.borderSmall,
+                    child: Image.network(
+                      cat.categoryImageUrl!,
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        width: 40,
+                        height: 40,
+                        color: Colors.grey[100],
+                        child: const Icon(Icons.broken_image, size: 20, color: Colors.grey),
+                      ),
+                    ),
+                  )
+                : Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppTheme.primary.withOpacity(0.05),
+                      borderRadius: AppTheme.borderSmall,
+                    ),
+                    child: const Icon(Icons.category_outlined, size: 20, color: AppTheme.primary),
+                  ),
             title: Row(
               children: [
                 Text(cat.name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
@@ -116,10 +141,10 @@ class AdminCategoriesView extends GetView<AdminCategoriesController> {
                 ],
               ],
             ),
-            subtitle: cat.description != null && cat.description!.isNotEmpty
+            subtitle: cat.cleanDescription.isNotEmpty
                 ? Padding(
                     padding: const EdgeInsets.only(top: 4.0),
-                    child: Text(cat.description!, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                    child: Text(cat.cleanDescription, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
                   )
                 : null,
             trailing: Row(
@@ -144,7 +169,8 @@ class AdminCategoriesView extends GetView<AdminCategoriesController> {
   void _showCategoryDialog(BuildContext context, [Category? category]) {
     final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController(text: category?.name ?? '');
-    final descController = TextEditingController(text: category?.description ?? '');
+    final descController = TextEditingController(text: category?.cleanDescription ?? '');
+    final imageController = TextEditingController(text: category?.categoryImageUrl ?? '');
     
     bool isSpecial = category?.isSpecial ?? false;
     String specialColor = category?.specialColor ?? '#E91E63';
@@ -197,6 +223,42 @@ class AdminCategoriesView extends GetView<AdminCategoriesController> {
                     ),
                     if (isSpecial) ...[
                       const SizedBox(height: 8),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: imageController,
+                              decoration: const InputDecoration(
+                                labelText: 'Category Picture URL',
+                                hintText: 'https://example.com/picture.jpg',
+                                helperText: 'Recommended: 400x200px (2:1 Aspect Ratio)',
+                              ),
+                              validator: (v) {
+                                if (v != null && v.trim().isNotEmpty && !v.trim().startsWith('http')) {
+                                  return 'Enter a valid URL starting with http';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 12.0),
+                            child: IconButton(
+                              icon: const Icon(Icons.upload_file, color: AppTheme.primary),
+                              tooltip: 'Upload from device',
+                              onPressed: () async {
+                                final url = await controller.pickAndUploadImage();
+                                if (url != null) {
+                                  imageController.text = url;
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         decoration: const InputDecoration(labelText: 'Special Theme Color'),
                         value: specialColor,
@@ -244,6 +306,7 @@ class AdminCategoriesView extends GetView<AdminCategoriesController> {
                     id: category?.id,
                     name: nameController.text.trim(),
                     description: descController.text.trim().isEmpty ? null : descController.text.trim(),
+                    imageUrl: imageController.text.trim(),
                     isSpecial: isSpecial,
                     specialColor: specialColor,
                   );
@@ -253,7 +316,7 @@ class AdminCategoriesView extends GetView<AdminCategoriesController> {
               ),
             ],
           );
-        }
+        },
       ),
     );
   }

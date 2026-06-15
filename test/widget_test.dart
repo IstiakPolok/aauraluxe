@@ -9,6 +9,7 @@ import 'package:aauraluxe/app/data/providers/api_client.dart';
 import 'package:aauraluxe/app/data/providers/auth_api.dart';
 import 'package:aauraluxe/app/data/providers/product_api.dart';
 import 'package:aauraluxe/app/data/providers/category_api.dart';
+import 'package:aauraluxe/app/data/providers/promo_banner_api.dart';
 import 'package:aauraluxe/app/modules/auth/controllers/auth_controller.dart';
 import 'package:aauraluxe/app/modules/customer/cart/controllers/cart_controller.dart';
 import 'package:aauraluxe/app/modules/customer/home/controllers/home_controller.dart';
@@ -93,6 +94,13 @@ class MockCategoryApi extends CategoryApi {
   }
 }
 
+class MockPromoBannerApi extends PromoBannerApi {
+  @override
+  Future<List<PromoBanner>> getBanners() async {
+    return [];
+  }
+}
+
 class MockAuthApi extends AuthApi {
   @override
   Future<UserProfile?> getProfile(String userId) async {
@@ -120,6 +128,7 @@ void main() {
     Get.put<AuthApi>(MockAuthApi());
     Get.put<ProductApi>(MockProductApi());
     Get.put<CategoryApi>(MockCategoryApi());
+    Get.put<PromoBannerApi>(MockPromoBannerApi());
     
     Get.put(AuthController());
     Get.put(CartController());

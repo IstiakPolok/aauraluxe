@@ -30,4 +30,19 @@ class PromoBanner {
       'created_at': createdAt.toIso8601String(),
     };
   }
+  String get desktopImageUrl {
+    if (imageUrl.isEmpty) return '';
+    final parts = imageUrl.split('||');
+    return parts[0].trim();
+  }
+
+  String get mobileImageUrl {
+    if (imageUrl.isEmpty) return '';
+    final parts = imageUrl.split('||');
+    if (parts.length > 1) {
+      final url = parts[1].trim();
+      return url.isNotEmpty ? url : desktopImageUrl;
+    }
+    return desktopImageUrl;
+  }
 }

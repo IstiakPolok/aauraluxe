@@ -62,7 +62,6 @@ class HomeView extends GetView<HomeController> {
                     const SizedBox(height: AppTheme.s32),
 
                     _buildMegaDeals(context, isDesktop),
-                    const SizedBox(height: AppTheme.s32),
 
                     _buildHotMenu(context, isDesktop),
                     const SizedBox(height: AppTheme.s32),
@@ -287,13 +286,16 @@ class HomeView extends GetView<HomeController> {
                       '',
                       isSelected: controller.selectedCategoryId.value.isEmpty,
                     ),
-                    ...controller.categories.where((c) => !c.isSpecial).map(
-                      (c) => navLink(
-                        c.name,
-                        c.id,
-                        isSelected: controller.selectedCategoryId.value == c.id,
-                      ),
-                    ),
+                    ...controller.categories
+                        .where((c) => !c.isSpecial)
+                        .map(
+                          (c) => navLink(
+                            c.name,
+                            c.id,
+                            isSelected:
+                                controller.selectedCategoryId.value == c.id,
+                          ),
+                        ),
                   ],
                 ),
               ),
@@ -302,7 +304,9 @@ class HomeView extends GetView<HomeController> {
               children: [
                 ...controller.categories.where((c) => c.isSpecial).map((c) {
                   final hexColor = c.specialColor ?? '#E91E63';
-                  final color = Color(int.parse(hexColor.replaceFirst('#', '0xff')));
+                  final color = Color(
+                    int.parse(hexColor.replaceFirst('#', '0xff')),
+                  );
                   return Padding(
                     padding: const EdgeInsets.only(left: 16),
                     child: specialNavLink(c.name, color, () {
@@ -310,13 +314,15 @@ class HomeView extends GetView<HomeController> {
                     }),
                   );
                 }),
-                if (controller.categories.where((c) => c.isSpecial).isEmpty) ...[
+                if (controller.categories
+                    .where((c) => c.isSpecial)
+                    .isEmpty) ...[
                   specialNavLink('Buy One Get One', AppTheme.accent, () {}),
                   const SizedBox(width: 16),
                   specialNavLink('Brands', Colors.pink, () {}),
                   const SizedBox(width: 16),
                   specialNavLink('Blog', Colors.teal, () {}),
-                ]
+                ],
               ],
             ),
           ],
@@ -382,18 +388,30 @@ class HomeView extends GetView<HomeController> {
               borderRadius: AppTheme.borderLarge,
               child: PageView.builder(
                 controller: controller.promoPageController,
-                onPageChanged: (index) => controller.currentPromoIndex.value = index,
+                onPageChanged: (index) =>
+                    controller.currentPromoIndex.value = index,
                 itemCount: controller.promoBanners.length,
                 itemBuilder: (context, index) {
                   final banner = controller.promoBanners[index];
+                  final isDesktopViewport =
+                      MediaQuery.of(context).size.width >= 1024;
+                  final bannerUrl = isDesktopViewport
+                      ? banner.desktopImageUrl
+                      : banner.mobileImageUrl;
+
                   return GestureDetector(
                     onTap: () {
-                      if (banner.categoryId != null && banner.categoryId!.isNotEmpty) {
-                        Get.toNamed('${AppRoutes.CATEGORY_PRODUCTS}?id=${banner.categoryId}');
+                      if (banner.categoryId != null &&
+                          banner.categoryId!.isNotEmpty) {
+                        Get.toNamed(
+                          '${AppRoutes.CATEGORY_PRODUCTS}?id=${banner.categoryId}',
+                        );
                       }
                     },
                     child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: AppTheme.s4),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: AppTheme.s4,
+                      ),
                       decoration: BoxDecoration(
                         borderRadius: AppTheme.borderLarge,
                         boxShadow: [
@@ -401,10 +419,10 @@ class HomeView extends GetView<HomeController> {
                             color: Colors.black.withOpacity(0.08),
                             blurRadius: 15,
                             offset: const Offset(0, 5),
-                          )
+                          ),
                         ],
                         image: DecorationImage(
-                          image: NetworkImage(banner.imageUrl),
+                          image: NetworkImage(bannerUrl),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -413,7 +431,7 @@ class HomeView extends GetView<HomeController> {
                 },
               ),
             ),
-            
+
             // Dot Indicators overlay
             Positioned(
               bottom: 16,
@@ -421,22 +439,27 @@ class HomeView extends GetView<HomeController> {
               right: 0,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(controller.promoBanners.length, (index) {
-                  final isSelected = controller.currentPromoIndex.value == index;
+                children: List.generate(controller.promoBanners.length, (
+                  index,
+                ) {
+                  final isSelected =
+                      controller.currentPromoIndex.value == index;
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     width: isSelected ? 24 : 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: isSelected ? AppTheme.primary : Colors.white.withOpacity(0.6),
+                      color: isSelected
+                          ? AppTheme.primary
+                          : Colors.white.withOpacity(0.6),
                       borderRadius: BorderRadius.circular(4),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
                           blurRadius: 2,
                           offset: const Offset(0, 1),
-                        )
+                        ),
                       ],
                     ),
                   );
@@ -456,10 +479,15 @@ class HomeView extends GetView<HomeController> {
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new, size: 16, color: AppTheme.textPrimary),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      size: 16,
+                      color: AppTheme.textPrimary,
+                    ),
                     onPressed: () {
                       int prevPage = controller.currentPromoIndex.value - 1;
-                      if (prevPage < 0) prevPage = controller.promoBanners.length - 1;
+                      if (prevPage < 0)
+                        prevPage = controller.promoBanners.length - 1;
                       controller.promoPageController.animateToPage(
                         prevPage,
                         duration: const Duration(milliseconds: 500),
@@ -483,10 +511,15 @@ class HomeView extends GetView<HomeController> {
                     shape: BoxShape.circle,
                   ),
                   child: IconButton(
-                    icon: const Icon(Icons.arrow_forward_ios, size: 16, color: AppTheme.textPrimary),
+                    icon: const Icon(
+                      Icons.arrow_forward_ios,
+                      size: 16,
+                      color: AppTheme.textPrimary,
+                    ),
                     onPressed: () {
                       int nextPage = controller.currentPromoIndex.value + 1;
-                      if (nextPage >= controller.promoBanners.length) nextPage = 0;
+                      if (nextPage >= controller.promoBanners.length)
+                        nextPage = 0;
                       controller.promoPageController.animateToPage(
                         nextPage,
                         duration: const Duration(milliseconds: 500),
@@ -504,42 +537,132 @@ class HomeView extends GetView<HomeController> {
   }
 
   Widget _buildMegaDeals(BuildContext context, bool isDesktop) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Mega Deals',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.textPrimary,
+    return Obx(() {
+      final specialCategories = controller.categories
+          .where(
+            (c) =>
+                c.isSpecial &&
+                c.categoryImageUrl != null &&
+                c.categoryImageUrl!.isNotEmpty,
+          )
+          .toList();
+      if (specialCategories.isEmpty) {
+        return const SizedBox.shrink();
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Mega Deals',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.textPrimary,
+            ),
           ),
-        ),
-        const SizedBox(height: AppTheme.s16),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: isDesktop ? 4 : 2,
-            childAspectRatio: 2.0,
-            crossAxisSpacing: AppTheme.s16,
-            mainAxisSpacing: AppTheme.s16,
-          ),
-          itemCount: controller.megaDealsBanners.length,
-          itemBuilder: (context, index) {
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: AppTheme.borderMedium,
-                image: DecorationImage(
-                  image: NetworkImage(controller.megaDealsBanners[index]),
-                  fit: BoxFit.cover,
+          const SizedBox(height: AppTheme.s16),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: isDesktop ? 4 : 2,
+              childAspectRatio: 2.0,
+              crossAxisSpacing: AppTheme.s16,
+              mainAxisSpacing: AppTheme.s16,
+            ),
+            itemCount: specialCategories.length,
+            itemBuilder: (context, index) {
+              final category = specialCategories[index];
+              final hexColor = category.specialColor ?? '#E91E63';
+              final themeColor = Color(
+                int.parse(hexColor.replaceFirst('#', '0xff')),
+              );
+
+              return GestureDetector(
+                onTap: () => Get.toNamed(
+                  '${AppRoutes.CATEGORY_PRODUCTS}?id=${category.id}',
                 ),
-              ),
-            );
-          },
-        ),
-      ],
-    );
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: AppTheme.borderMedium,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                    image: DecorationImage(
+                      image: NetworkImage(category.categoryImageUrl!),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: AppTheme.borderMedium,
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.1),
+                          Colors.black.withOpacity(0.65),
+                        ],
+                      ),
+                    ),
+                    alignment: Alignment.bottomLeft,
+                    padding: const EdgeInsets.all(AppTheme.s12),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: themeColor,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'SPECIAL',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          category.name.toUpperCase(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.0,
+                            shadows: [
+                              Shadow(
+                                offset: Offset(0, 1),
+                                blurRadius: 2,
+                                color: Colors.black45,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+          const SizedBox(height: AppTheme.s32),
+        ],
+      );
+    });
   }
 
   Widget _buildHotMenu(BuildContext context, bool isDesktop) {
@@ -645,7 +768,7 @@ class HomeView extends GetView<HomeController> {
             final category = controller.categories[index];
             final isSelected =
                 controller.selectedCategoryId.value == category.id;
-            
+
             Color chipColor = AppTheme.primary;
             Color textColor = isSelected ? Colors.white : AppTheme.textPrimary;
             Color bgColor = Colors.white;
@@ -653,7 +776,9 @@ class HomeView extends GetView<HomeController> {
 
             if (category.isSpecial) {
               final hexColor = category.specialColor ?? '#E91E63';
-              final baseColor = Color(int.parse(hexColor.replaceFirst('#', '0xff')));
+              final baseColor = Color(
+                int.parse(hexColor.replaceFirst('#', '0xff')),
+              );
               chipColor = baseColor;
               if (isSelected) {
                 bgColor = baseColor;
@@ -681,13 +806,13 @@ class HomeView extends GetView<HomeController> {
                 backgroundColor: bgColor,
                 labelStyle: TextStyle(
                   color: textColor,
-                  fontWeight: (isSelected || category.isSpecial) ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: (isSelected || category.isSpecial)
+                      ? FontWeight.bold
+                      : FontWeight.normal,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: AppTheme.borderSmall,
-                  side: BorderSide(
-                    color: borderColor,
-                  ),
+                  side: BorderSide(color: borderColor),
                 ),
                 onSelected: (_) => Get.toNamed(
                   '${AppRoutes.CATEGORY_PRODUCTS}?id=${category.id}',

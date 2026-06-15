@@ -10,14 +10,16 @@ class AdminBannersView extends GetView<AdminBannersController> {
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.of(context).size.width >= 1024;
-    final padding = isDesktop ? const EdgeInsets.all(AppTheme.s32) : const EdgeInsets.all(AppTheme.s16);
+    final padding = isDesktop
+        ? const EdgeInsets.all(AppTheme.s32)
+        : const EdgeInsets.all(AppTheme.s16);
 
     // Make sure controller is initialized
     Get.put(AdminBannersController());
 
     return Scaffold(
       backgroundColor: AppTheme.background,
-      floatingActionButton: !isDesktop 
+      floatingActionButton: !isDesktop
           ? FloatingActionButton(
               backgroundColor: AppTheme.primary,
               foregroundColor: Colors.white,
@@ -34,7 +36,27 @@ class AdminBannersView extends GetView<AdminBannersController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Manage Promo Banners', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        'Manage Promo Banners',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Recommended size: 1024x400 (Desktop) | 512x200 (Mobile)',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
                   ElevatedButton.icon(
                     onPressed: () => _showBannerDialog(context),
                     icon: const Icon(Icons.add, size: 16),
@@ -69,11 +91,21 @@ class AdminBannersView extends GetView<AdminBannersController> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.view_carousel_outlined, size: 48, color: AppTheme.textSecondary),
+          const Icon(
+            Icons.view_carousel_outlined,
+            size: 48,
+            color: AppTheme.textSecondary,
+          ),
           const SizedBox(height: AppTheme.s16),
-          const Text('No promo banners found', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          const Text(
+            'No promo banners found',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
           const SizedBox(height: 8),
-          const Text('Add banners that link to your categories for promotions.', style: TextStyle(color: AppTheme.textSecondary)),
+          const Text(
+            'Add banners that link to your categories for promotions.',
+            style: TextStyle(color: AppTheme.textSecondary),
+          ),
         ],
       ),
     );
@@ -89,16 +121,24 @@ class AdminBannersView extends GetView<AdminBannersController> {
       ),
       child: ListView.separated(
         itemCount: controller.banners.length,
-        separatorBuilder: (context, index) => const Divider(color: AppTheme.border, height: 1),
+        separatorBuilder: (context, index) =>
+            const Divider(color: AppTheme.border, height: 1),
         itemBuilder: (context, index) {
           final banner = controller.banners[index];
-          
+
           // Find target category name
-          final category = controller.categories.firstWhereOrNull((c) => c.id == banner.categoryId);
-          final targetText = category != null ? 'Redirects to: ${category.name}' : 'No Redirect (Static)';
+          final category = controller.categories.firstWhereOrNull(
+            (c) => c.id == banner.categoryId,
+          );
+          final targetText = category != null
+              ? 'Redirects to: ${category.name}'
+              : 'No Redirect (Static)';
 
           return ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: AppTheme.s20, vertical: AppTheme.s8),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppTheme.s20,
+              vertical: AppTheme.s8,
+            ),
             leading: ClipRRect(
               borderRadius: AppTheme.borderSmall,
               child: Image.network(
@@ -114,18 +154,28 @@ class AdminBannersView extends GetView<AdminBannersController> {
                 ),
               ),
             ),
-            title: Text(targetText, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            title: Text(
+              targetText,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 4.0),
               child: Text(
                 banner.imageUrl,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                style: const TextStyle(
+                  color: AppTheme.textSecondary,
+                  fontSize: 12,
+                ),
               ),
             ),
             trailing: IconButton(
-              icon: const Icon(Icons.delete_outline, color: AppTheme.error, size: 20),
+              icon: const Icon(
+                Icons.delete_outline,
+                color: AppTheme.error,
+                size: 20,
+              ),
               onPressed: () => _showDeleteConfirmation(context, banner),
             ),
           );
@@ -136,7 +186,8 @@ class AdminBannersView extends GetView<AdminBannersController> {
 
   void _showBannerDialog(BuildContext context) {
     final formKey = GlobalKey<FormState>();
-    final urlController = TextEditingController();
+    final desktopUrlController = TextEditingController();
+    final mobileUrlController = TextEditingController();
     String? selectedCategoryId;
 
     Get.dialog(
@@ -144,23 +195,84 @@ class AdminBannersView extends GetView<AdminBannersController> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text('Add Promo Banner'),
         content: SizedBox(
-          width: 400,
+          width: 450,
           child: Form(
             key: formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextFormField(
-                  controller: urlController,
-                  decoration: const InputDecoration(
-                    labelText: 'Banner Image URL',
-                    hintText: 'https://example.com/banner.jpg',
-                  ),
-                  validator: (v) {
-                    if (v == null || v.trim().isEmpty) return 'Required';
-                    if (!v.trim().startsWith('http')) return 'Enter a valid URL';
-                    return null;
-                  },
+                // Desktop image URL + upload button
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: desktopUrlController,
+                        decoration: const InputDecoration(
+                          labelText: 'Desktop Banner Image URL',
+                          hintText: 'https://example.com/banner_desktop.jpg',
+                          helperText: 'Required. Recommended: 1024x400px',
+                        ),
+                        validator: (v) {
+                          if (v == null || v.trim().isEmpty) return 'Required';
+                          if (!v.trim().startsWith('http')) return 'Enter a valid URL';
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12.0),
+                      child: IconButton(
+                        icon: const Icon(Icons.upload_file, color: AppTheme.primary),
+                        tooltip: 'Upload from device',
+                        onPressed: () async {
+                          final url = await controller.pickAndUploadImage();
+                          if (url != null) {
+                            desktopUrlController.text = url;
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                
+                // Mobile image URL + upload button
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: mobileUrlController,
+                        decoration: const InputDecoration(
+                          labelText: 'Mobile Banner Image URL (Optional)',
+                          hintText: 'https://example.com/banner_mobile.jpg',
+                          helperText: 'Optional. Fallback is Desktop. Recommended: 512x200px',
+                        ),
+                        validator: (v) {
+                          if (v != null && v.trim().isNotEmpty && !v.trim().startsWith('http')) {
+                            return 'Enter a valid URL';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12.0),
+                      child: IconButton(
+                        icon: const Icon(Icons.upload_file, color: AppTheme.primary),
+                        tooltip: 'Upload from device',
+                        onPressed: () async {
+                          final url = await controller.pickAndUploadImage();
+                          if (url != null) {
+                            mobileUrlController.text = url;
+                          }
+                        },
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 Obx(() => DropdownButtonFormField<String>(
@@ -195,8 +307,12 @@ class AdminBannersView extends GetView<AdminBannersController> {
           ElevatedButton(
             onPressed: () {
               if (!formKey.currentState!.validate()) return;
+              final desktopUrl = desktopUrlController.text.trim();
+              final mobileUrl = mobileUrlController.text.trim();
+              final combinedUrl = mobileUrl.isNotEmpty ? '$desktopUrl || $mobileUrl' : desktopUrl;
+
               controller.createBanner(
-                imageUrl: urlController.text.trim(),
+                imageUrl: combinedUrl,
                 categoryId: selectedCategoryId,
               );
               Get.back();
@@ -212,7 +328,9 @@ class AdminBannersView extends GetView<AdminBannersController> {
     Get.dialog(
       AlertDialog(
         title: const Text('Delete Promo Banner'),
-        content: const Text('Are you sure you want to permanently delete this promo banner?'),
+        content: const Text(
+          'Are you sure you want to permanently delete this promo banner?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),

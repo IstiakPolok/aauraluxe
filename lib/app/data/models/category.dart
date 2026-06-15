@@ -20,8 +20,8 @@ class Category {
       id: json['id'] as String? ?? '',
       name: json['name'] as String? ?? '',
       description: json['description'] as String?,
-      createdAt: json['created_at'] != null 
-          ? DateTime.parse(json['created_at'] as String) 
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
           : DateTime.now(),
       isSpecial: json['is_special'] as bool? ?? false,
       specialColor: json['special_color'] as String? ?? '#E91E63',
@@ -37,5 +37,21 @@ class Category {
       'is_special': isSpecial,
       'special_color': specialColor,
     };
+  }
+
+  String get cleanDescription {
+    if (description == null) return '';
+    final parts = description!.split('||');
+    return parts[0].trim();
+  }
+
+  String? get categoryImageUrl {
+    if (description == null) return null;
+    final parts = description!.split('||');
+    if (parts.length > 1) {
+      final url = parts[1].trim();
+      return url.isNotEmpty ? url : null;
+    }
+    return null;
   }
 }

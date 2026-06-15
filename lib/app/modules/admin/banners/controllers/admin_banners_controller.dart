@@ -1,12 +1,15 @@
 import 'package:get/get.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:aauraluxe/app/data/models/models.dart';
 import 'package:aauraluxe/app/data/providers/promo_banner_api.dart';
 import 'package:aauraluxe/app/data/providers/category_api.dart';
+import 'package:aauraluxe/app/data/providers/product_api.dart';
 import 'package:aauraluxe/app/data/providers/activity_log_api.dart';
 
 class AdminBannersController extends GetxController {
   final PromoBannerApi _bannerApi = Get.put(PromoBannerApi());
   final CategoryApi _categoryApi = Get.put(CategoryApi());
+  final ProductApi _productApi = Get.put(ProductApi());
   final ActivityLogApi _activityLogApi = Get.put(ActivityLogApi());
 
   final RxList<PromoBanner> banners = <PromoBanner>[].obs;
@@ -84,5 +87,32 @@ class AdminBannersController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  // Pick image and upload to storage, returning public URL
+  Future<String?> pickAndUploadImage() async {
+    try {
+      final FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        withData: true,
+      );
+
+      if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+        final bytes = file.bytes;
+        if (bytes != null) {
+          final fileName = 'banner_${DateTime.now().millisecondsSinceEpoch}_${file.name}';
+          final mime = file.extension == 'png' ? 'image/png' : 'image/jpeg';
+          isLoading.value = true;
+          final uploadedUrl = await _productApi.uploadProductImage(fileName, bytes, mime);
+          return uploadedUrl;
+        }
+      }
+    } catch (e) {
+      Get.snackbar('Upload Error', 'Failed to upload image: $e', snackPosition: SnackPosition.BOTTOM);
+    } finally {
+      isLoading.value = false;
+    }
+    return null;
   }
 }

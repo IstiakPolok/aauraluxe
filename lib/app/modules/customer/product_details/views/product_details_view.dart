@@ -124,14 +124,15 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
         boxShadow: AppTheme.softShadow,
       ),
       child: PageView.builder(
+        controller: controller.pageController,
         itemCount: images.length,
-        onPageChanged: (idx) => controller.updateActiveImage(idx),
+        onPageChanged: (idx) => controller.activeImageIndex.value = idx,
         itemBuilder: (context, index) {
           return ClipRRect(
             borderRadius: AppTheme.borderLarge,
             child: Image.network(
               images[index],
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           );
         },

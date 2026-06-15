@@ -14,9 +14,7 @@ class ProductApi extends GetxService {
     String? sortBy, // 'price_asc', 'price_desc', 'newest'
   }) async {
     try {
-      final Map<String, String> params = {
-        'select': '*',
-      };
+      final Map<String, String> params = {'select': '*'};
 
       // Apply category filter
       if (categoryId != null && categoryId.isNotEmpty) {
@@ -48,7 +46,9 @@ class ProductApi extends GetxService {
 
       final response = await _apiClient.get('/products', queryParams: params);
       final list = jsonDecode(response.body) as List;
-      return list.map((json) => Product.fromJson(json as Map<String, dynamic>)).toList();
+      return list
+          .map((json) => Product.fromJson(json as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       rethrow;
     }
@@ -59,10 +59,7 @@ class ProductApi extends GetxService {
     try {
       final response = await _apiClient.get(
         '/products',
-        queryParams: {
-          'id': 'eq.$id',
-          'select': '*',
-        },
+        queryParams: {'id': 'eq.$id', 'select': '*'},
       );
       final list = jsonDecode(response.body) as List;
       if (list.isNotEmpty) {
@@ -80,7 +77,7 @@ class ProductApi extends GetxService {
       final data = product.toJson();
       // Let DB generate ID
       data.remove('id');
-      
+
       final response = await _apiClient.post(
         '/products',
         data,
@@ -108,9 +105,7 @@ class ProductApi extends GetxService {
         '/products',
         data,
         returnRepresentation: true,
-        queryParams: {
-          'id': 'eq.$id',
-        },
+        queryParams: {'id': 'eq.$id'},
       );
 
       final list = jsonDecode(response.body) as List;
@@ -126,24 +121,25 @@ class ProductApi extends GetxService {
   // Delete a product (Admins/Super Admins only)
   Future<void> deleteProduct(String id) async {
     try {
-      await _apiClient.delete(
-        '/products',
-        queryParams: {
-          'id': 'eq.$id',
-        },
-      );
+      await _apiClient.delete('/products', queryParams: {'id': 'eq.$id'});
     } catch (e) {
       rethrow;
     }
   }
 
   // Upload an image binary to Supabase Storage
-  Future<String> uploadProductImage(String fileName, List<int> fileBytes, String mimeType) async {
+  Future<String> uploadProductImage(
+    String fileName,
+    List<int> fileBytes,
+    String mimeType,
+  ) async {
     try {
       // Endpoint: /storage/v1/object/products/<filename>
       // Make raw HTTP post request using apiClient credentials
-      final uri = Uri.parse('${_apiClient.baseUrl}/storage/v1/object/products/$fileName');
-      
+      final uri = Uri.parse(
+        '${_apiClient.baseUrl}/storage/v1/object/products/$fileName',
+      );
+
       final response = await http.post(
         uri,
         headers: {
@@ -162,8 +158,8 @@ class ProductApi extends GetxService {
       // Endpoint to view image: /storage/v1/object/public/products/<filename>
       return '${_apiClient.baseUrl}/storage/v1/object/public/products/$fileName';
     } catch (e) {
-      // Fallback: If Storage bucket is not fully configured, return a elegant placeholder image url
-      return 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&q=80';
+      print('Supabase upload exception details: $e');
+      rethrow;
     }
   }
 }

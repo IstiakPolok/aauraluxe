@@ -291,13 +291,39 @@ class AdminProductsView extends GetView<AdminProductsController> {
                   ),
                   const SizedBox(height: 12),
 
-                  // Image URL csv
-                  TextFormField(
-                    controller: imageController,
-                    decoration: const InputDecoration(
-                      labelText: 'Image URLs (comma separated)',
-                      hintText: 'http://url1.jpg, http://url2.jpg',
-                    ),
+                   // Image URL csv + upload button
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: imageController,
+                          decoration: const InputDecoration(
+                            labelText: 'Image URLs (comma separated)',
+                            hintText: 'http://url1.jpg, http://url2.jpg',
+                            helperText: 'Click upload to add local files to the list',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12.0),
+                        child: IconButton(
+                          icon: const Icon(Icons.upload_file, color: AppTheme.primary),
+                          tooltip: 'Upload from device',
+                          onPressed: () async {
+                            final url = await controller.uploadImageFromDevice();
+                            if (url != null) {
+                              if (imageController.text.trim().isEmpty) {
+                                imageController.text = url;
+                              } else {
+                                imageController.text = '${imageController.text.trim()}, $url';
+                              }
+                            }
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
