@@ -66,9 +66,21 @@ class HomeView extends GetView<HomeController> {
                     _buildHotMenu(context, isDesktop),
                     const SizedBox(height: AppTheme.s32),
 
-                    _buildSectionHeader('Weekly Ranking', onSeeAll: () {}),
+                    _buildSectionHeader('Featured Products', onSeeAll: () {}),
                     const SizedBox(height: AppTheme.s16),
-                    _buildWeeklyRankingList(context),
+                    _buildProductCarousel(context, controller.featuredProducts),
+                    
+                    const SizedBox(height: AppTheme.s32),
+                    
+                    _buildSectionHeader('New Arrivals', onSeeAll: () {}),
+                    const SizedBox(height: AppTheme.s16),
+                    _buildProductCarousel(context, controller.newArrivals),
+                    
+                    const SizedBox(height: AppTheme.s32),
+                    
+                    _buildSectionHeader('Best Selling Products', onSeeAll: () {}),
+                    const SizedBox(height: AppTheme.s16),
+                    _buildProductCarousel(context, controller.bestSellingProducts),
 
                     const SizedBox(height: AppTheme.s32),
 
@@ -727,7 +739,7 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  Widget _buildWeeklyRankingList(BuildContext context) {
+  Widget _buildProductCarousel(BuildContext context, List<Product> items) {
     return Obx(() {
       if (controller.isProductsLoading.value) {
         return const SizedBox(
@@ -735,7 +747,14 @@ class HomeView extends GetView<HomeController> {
           child: Center(child: CircularProgressIndicator()),
         );
       }
-      final items = controller.featuredProducts;
+      
+      if (items.isEmpty) {
+        return const SizedBox(
+          height: 100,
+          child: Center(child: Text('No products available right now.', style: TextStyle(color: AppTheme.textSecondary))),
+        );
+      }
+
       return SizedBox(
         height: 320,
         child: ListView.builder(
@@ -747,7 +766,6 @@ class HomeView extends GetView<HomeController> {
               margin: const EdgeInsets.only(right: 16),
               child: ChardikeProductCard(
                 product: items[index],
-                rank: index + 1,
               ),
             );
           },

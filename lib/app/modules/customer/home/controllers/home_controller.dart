@@ -220,4 +220,12 @@ class HomeController extends GetxController {
     if (sorted.length <= 6) return sorted;
     return sorted.sublist(0, 6);
   }
+
+  List<Product> get bestSellingProducts {
+    // For demonstration, simulating best selling by sorting stock lowest to highest (items selling fast)
+    final sorted = List<Product>.from(products);
+    sorted.sort((a, b) => a.stock.compareTo(b.stock));
+    if (sorted.length <= 6) return sorted;
+    return sorted.sublist(0, 6);
+  }
 }
