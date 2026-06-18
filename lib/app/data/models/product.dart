@@ -6,6 +6,7 @@ class Product {
   final double? discountPrice;
   final String? categoryId;
   final int stock;
+  final int soldCount;
   final List<String> imageUrls;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -18,6 +19,7 @@ class Product {
     this.discountPrice,
     this.categoryId,
     required this.stock,
+    this.soldCount = 0,
     required this.imageUrls,
     required this.createdAt,
     required this.updatedAt,
@@ -34,15 +36,6 @@ class Product {
       sum += id.codeUnitAt(i);
     }
     return 4.3 + (sum % 8) * 0.1;
-  }
-
-  int get soldCount {
-    if (id.isEmpty) return 50;
-    int sum = 0;
-    for (int i = 0; i < id.length; i++) {
-      sum += id.codeUnitAt(i);
-    }
-    return 25 + (sum % 426);
   }
 
   factory Product.fromJson(Map<String, dynamic> json) {
@@ -70,6 +63,7 @@ class Product {
       discountPrice: json['discount_price'] != null ? (json['discount_price'] as num).toDouble() : null,
       categoryId: json['category_id'] as String?,
       stock: (json['stock'] as num? ?? 0).toInt(),
+      soldCount: (json['sold_count'] as num? ?? 0).toInt(),
       imageUrls: urls,
       createdAt: json['created_at'] != null 
           ? DateTime.parse(json['created_at'] as String) 
@@ -89,6 +83,7 @@ class Product {
       'discount_price': discountPrice,
       'category_id': categoryId,
       'stock': stock,
+      'sold_count': soldCount,
       'image_urls': imageUrls,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),

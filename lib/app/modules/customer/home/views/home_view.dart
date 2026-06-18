@@ -84,6 +84,12 @@ class HomeView extends GetView<HomeController> {
 
                     const SizedBox(height: AppTheme.s32),
 
+                    _buildSectionHeader('Trending Now', onSeeAll: () {}),
+                    const SizedBox(height: AppTheme.s16),
+                    _buildProductCarousel(context, controller.trendingProducts),
+
+                    const SizedBox(height: AppTheme.s32),
+
                     _buildSectionHeader(
                       'All Products',
                       onSeeAll: () {

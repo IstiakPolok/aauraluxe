@@ -34,6 +34,7 @@ create table if not exists public.products (
   discount_price numeric check (discount_price >= 0),
   category_id uuid references public.categories on delete set null,
   stock integer not null default 0 check (stock >= 0),
+  sold_count integer not null default 0 check (sold_count >= 0),
   image_urls text[] not null default '{}',
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
@@ -231,3 +232,22 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
+
+-- =========================================================================
+-- Trigger for automatic product sold_count increment
+-- =========================================================================
+create or replace function public.increment_product_sold_count()
+returns trigger as $$
+begin
+  update public.products
+  set sold_count = sold_count + new.quantity
+  where id = new.product_id;
+  return new;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists on_order_item_created on public.order_items;
+
+create trigger on_order_item_created
+  after insert on public.order_items
+  for each row execute procedure public.increment_product_sold_count();

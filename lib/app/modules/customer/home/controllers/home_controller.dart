@@ -222,9 +222,30 @@ class HomeController extends GetxController {
   }
 
   List<Product> get bestSellingProducts {
-    // For demonstration, simulating best selling by sorting stock lowest to highest (items selling fast)
+    // Real Best Selling: sorted by highest actual sold count
     final sorted = List<Product>.from(products);
-    sorted.sort((a, b) => a.stock.compareTo(b.stock));
+    sorted.sort((a, b) => b.soldCount.compareTo(a.soldCount));
+    if (sorted.length <= 6) return sorted;
+    return sorted.sublist(0, 6);
+  }
+
+  List<Product> get trendingProducts {
+    // "Most selling in a short time" -> higher sold_count + recent date
+    final sorted = List<Product>.from(products);
+    final now = DateTime.now();
+    
+    sorted.sort((a, b) {
+      // Calculate a "Trending Score"
+      // Newer products get a multiplier so they rank higher even with fewer sales
+      final ageDaysA = now.difference(a.createdAt).inDays + 1; // avoid divide by zero
+      final scoreA = a.soldCount / ageDaysA;
+      
+      final ageDaysB = now.difference(b.createdAt).inDays + 1;
+      final scoreB = b.soldCount / ageDaysB;
+      
+      return scoreB.compareTo(scoreA); // Descending
+    });
+    
     if (sorted.length <= 6) return sorted;
     return sorted.sublist(0, 6);
   }
