@@ -7,6 +7,8 @@ class Product {
   final String? categoryId;
   final int stock;
   final int soldCount;
+  final double rating;
+  final int reviewCount;
   final List<String> imageUrls;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -20,6 +22,8 @@ class Product {
     this.categoryId,
     required this.stock,
     this.soldCount = 0,
+    this.rating = 0.0,
+    this.reviewCount = 0,
     required this.imageUrls,
     required this.createdAt,
     required this.updatedAt,
@@ -28,15 +32,6 @@ class Product {
   double get effectivePrice => discountPrice != null ? discountPrice! : price;
   bool get hasDiscount => discountPrice != null && discountPrice! < price;
   bool get isOutOfStock => stock <= 0;
-
-  double get rating {
-    if (id.isEmpty) return 4.8;
-    int sum = 0;
-    for (int i = 0; i < id.length; i++) {
-      sum += id.codeUnitAt(i);
-    }
-    return 4.3 + (sum % 8) * 0.1;
-  }
 
   factory Product.fromJson(Map<String, dynamic> json) {
     // Parse list of image URLs safely from text[] database format
@@ -64,6 +59,8 @@ class Product {
       categoryId: json['category_id'] as String?,
       stock: (json['stock'] as num? ?? 0).toInt(),
       soldCount: (json['sold_count'] as num? ?? 0).toInt(),
+      rating: (json['rating'] as num? ?? 0.0).toDouble(),
+      reviewCount: (json['review_count'] as num? ?? 0).toInt(),
       imageUrls: urls,
       createdAt: json['created_at'] != null 
           ? DateTime.parse(json['created_at'] as String) 
@@ -84,6 +81,8 @@ class Product {
       'category_id': categoryId,
       'stock': stock,
       'sold_count': soldCount,
+      'rating': rating,
+      'review_count': reviewCount,
       'image_urls': imageUrls,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),

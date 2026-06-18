@@ -63,6 +63,13 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
               const Divider(color: AppTheme.border),
               const SizedBox(height: AppTheme.s32),
               
+              // Reviews Section
+              _buildReviewsSection(context),
+
+              const SizedBox(height: AppTheme.s48),
+              const Divider(color: AppTheme.border),
+              const SizedBox(height: AppTheme.s32),
+              
               // Related Products Section
               _buildRelatedProducts(context),
             ],
@@ -187,6 +194,22 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
         Text(
           product.title,
           style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppTheme.textPrimary, letterSpacing: -0.5),
+        ),
+        const SizedBox(height: AppTheme.s8),
+        Row(
+          children: [
+            const Icon(Icons.star, color: Colors.amber, size: 20),
+            const SizedBox(width: 4),
+            Text(
+              product.rating.toStringAsFixed(1),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '(${product.reviewCount} Reviews)',
+              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+            ),
+          ],
         ),
         const SizedBox(height: AppTheme.s16),
 
@@ -365,5 +388,158 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
         ],
       );
     });
+  }
+
+  Widget _buildReviewsSection(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Customer Reviews',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+            ),
+            ElevatedButton.icon(
+              onPressed: () => _showReviewDialog(context),
+              icon: const Icon(Icons.edit, size: 16),
+              label: const Text('Write a Review'),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppTheme.s16),
+        Obx(() {
+          if (controller.isReviewsLoading.value && controller.reviews.isEmpty) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          
+          if (controller.reviews.isEmpty) {
+            return Container(
+              padding: const EdgeInsets.all(AppTheme.s24),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppTheme.background,
+                borderRadius: AppTheme.borderMedium,
+              ),
+              child: const Text(
+                'No reviews yet. Be the first to review this product!',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppTheme.textSecondary),
+              ),
+            );
+          }
+
+          return ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: controller.reviews.length,
+            separatorBuilder: (_, __) => const Divider(color: AppTheme.border, height: 32),
+            itemBuilder: (context, index) {
+              final review = controller.reviews[index];
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        review.userName ?? 'Verified Buyer',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      Text(
+                        '${review.createdAt.month}/${review.createdAt.day}/${review.createdAt.year}',
+                        style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: List.generate(5, (starIndex) {
+                      return Icon(
+                        starIndex < review.rating ? Icons.star : Icons.star_border,
+                        color: Colors.amber,
+                        size: 16,
+                      );
+                    }),
+                  ),
+                  if (review.comment != null && review.comment!.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      review.comment!,
+                      style: const TextStyle(fontSize: 14, color: AppTheme.textPrimary, height: 1.4),
+                    ),
+                  ]
+                ],
+              );
+            },
+          );
+        }),
+      ],
+    );
+  }
+
+  void _showReviewDialog(BuildContext context) {
+    int rating = 5;
+    final commentController = TextEditingController();
+
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Write a Review'),
+        content: StatefulBuilder(
+          builder: (context, setState) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Rate this product:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(5, (index) {
+                    return IconButton(
+                      icon: Icon(
+                        index < rating ? Icons.star : Icons.star_border,
+                        color: Colors.amber,
+                        size: 32,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          rating = index + 1;
+                        });
+                      },
+                    );
+                  }),
+                ),
+                const SizedBox(height: 16),
+                const Text('Your thoughts:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: commentController,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    hintText: 'What did you like or dislike?',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ],
+            );
+          }
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              controller.submitReview(rating.toDouble(), commentController.text);
+            },
+            child: const Text('Submit Review'),
+          ),
+        ],
+      ),
+    );
   }
 }

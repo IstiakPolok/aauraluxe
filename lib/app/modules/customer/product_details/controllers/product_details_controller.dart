@@ -2,17 +2,21 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:aauraluxe/app/data/models/models.dart';
 import 'package:aauraluxe/app/data/providers/product_api.dart';
+import 'package:aauraluxe/app/data/providers/review_api.dart';
 import 'package:aauraluxe/app/modules/customer/cart/controllers/cart_controller.dart';
 
 class ProductDetailsController extends GetxController {
   final ProductApi _productApi = Get.put(ProductApi());
+  final ReviewApi _reviewApi = Get.put(ReviewApi());
   final CartController _cartController = Get.find<CartController>();
 
   final Rxn<Product> product = Rxn<Product>();
   final RxList<Product> relatedProducts = <Product>[].obs;
+  final RxList<ProductReview> reviews = <ProductReview>[].obs;
 
   final RxInt activeImageIndex = 0.obs;
   final RxBool isLoading = false.obs;
+  final RxBool isReviewsLoading = false.obs;
   final RxBool isRelatedLoading = false.obs;
 
   final PageController pageController = PageController();
@@ -37,11 +41,35 @@ class ProductDetailsController extends GetxController {
           pageController.jumpToPage(0);
         }
         loadRelatedProducts(p);
+        loadReviews(id);
       }
     } catch (e) {
       print('Failed to load product details: $e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> loadReviews(String productId) async {
+    isReviewsLoading.value = true;
+    try {
+      final list = await _reviewApi.getProductReviews(productId);
+      reviews.value = list;
+    } finally {
+      isReviewsLoading.value = false;
+    }
+  }
+
+  Future<void> submitReview(double rating, String comment) async {
+    final pid = product.value?.id;
+    if (pid == null) return;
+    
+    final success = await _reviewApi.submitReview(pid, rating.toInt(), comment);
+    if (success) {
+      // Reload reviews and product (to update average rating and count)
+      loadReviews(pid);
+      final p = await _productApi.getProductById(pid);
+      if (p != null) product.value = p;
     }
   }
 

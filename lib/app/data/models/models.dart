@@ -5,3 +5,4 @@ export 'order_item.dart';
 export 'order.dart';
 export 'activity_log.dart';
 export 'promo_banner.dart';
+export 'product_review.dart';
