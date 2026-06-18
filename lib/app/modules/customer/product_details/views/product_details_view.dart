@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:aauraluxe/app/core/theme.dart';
 import '../controllers/product_details_controller.dart';
 import 'package:aauraluxe/app/routes/app_routes.dart';
+import 'package:aauraluxe/app/modules/auth/controllers/auth_controller.dart';
 
 class ProductDetailsView extends GetView<ProductDetailsController> {
   const ProductDetailsView({super.key});
@@ -402,7 +403,14 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
             ),
             ElevatedButton.icon(
-              onPressed: () => _showReviewDialog(context),
+              onPressed: () {
+                final auth = Get.find<AuthController>();
+                if (!auth.isAuthenticated) {
+                  _showLoginDialog(context);
+                } else {
+                  _showReviewDialog(context);
+                }
+              },
               icon: const Icon(Icons.edit, size: 16),
               label: const Text('Write a Review'),
             ),
@@ -476,6 +484,77 @@ class ProductDetailsView extends GetView<ProductDetailsController> {
           );
         }),
       ],
+    );
+  }
+
+  void _showLoginDialog(BuildContext context) {
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    final auth = Get.find<AuthController>();
+    final isLoading = false.obs;
+
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Login Required'),
+        content: Obx(() => Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('You must be logged in to leave a review.'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email_outlined),
+              ),
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: passwordController,
+              decoration: const InputDecoration(
+                labelText: 'Password',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock_outline),
+              ),
+              obscureText: true,
+            ),
+            if (isLoading.value) ...[
+              const SizedBox(height: 16),
+              const Center(child: CircularProgressIndicator()),
+            ]
+          ],
+        )),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+                Get.snackbar('Error', 'Please enter email and password');
+                return;
+              }
+              isLoading.value = true;
+              final success = await auth.login(
+                emailController.text.trim(),
+                passwordController.text,
+                redirect: false, // Stay on this screen
+              );
+              isLoading.value = false;
+              if (success) {
+                Get.back(); // close login dialog
+                // Now they can review
+                _showReviewDialog(context);
+              }
+            },
+            child: const Text('Login'),
+          ),
+        ],
+      ),
     );
   }
 

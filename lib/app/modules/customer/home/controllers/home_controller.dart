@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:aauraluxe/app/data/models/models.dart';
@@ -141,6 +142,7 @@ class HomeController extends GetxController {
         sortBy: sortBy.value,
       );
       products.value = list;
+      print('Loaded ${list.length} products. Category filter: ${selectedCategoryId.value}');
     } catch (e) {
       print('Failed to load products: $e');
     } finally {
@@ -224,7 +226,15 @@ class HomeController extends GetxController {
   List<Product> get bestSellingProducts {
     // Real Best Selling: sorted by highest actual sold count
     final sorted = List<Product>.from(products);
-    sorted.sort((a, b) => b.soldCount.compareTo(a.soldCount));
+    sorted.sort((a, b) {
+      final cmp = b.soldCount.compareTo(a.soldCount);
+      if (cmp != 0) return cmp;
+      // Tie-breaker: sort by rating if sold counts are equal (e.g. both 0)
+      final ratingCmp = b.rating.compareTo(a.rating);
+      if (ratingCmp != 0) return ratingCmp;
+      // Final tie-breaker: ID to make it deterministic but different from New Arrivals
+      return a.id.compareTo(b.id);
+    });
     if (sorted.length <= 6) return sorted;
     return sorted.sublist(0, 6);
   }
@@ -236,14 +246,20 @@ class HomeController extends GetxController {
     
     sorted.sort((a, b) {
       // Calculate a "Trending Score"
-      // Newer products get a multiplier so they rank higher even with fewer sales
-      final ageDaysA = now.difference(a.createdAt).inDays + 1; // avoid divide by zero
+      final ageDaysA = math.max(1, now.difference(a.createdAt).inDays + 1); // avoid divide by zero
       final scoreA = a.soldCount / ageDaysA;
       
-      final ageDaysB = now.difference(b.createdAt).inDays + 1;
+      final ageDaysB = math.max(1, now.difference(b.createdAt).inDays + 1);
       final scoreB = b.soldCount / ageDaysB;
       
-      return scoreB.compareTo(scoreA); // Descending
+      final cmp = scoreB.compareTo(scoreA); // Descending
+      if (cmp != 0) return cmp;
+      
+      // Tie-breaker: if scores are 0, use a mix of rating and inverse ID
+      final ratingCmp = b.rating.compareTo(a.rating);
+      if (ratingCmp != 0) return ratingCmp;
+      
+      return b.id.compareTo(a.id); // Inverse ID tie-breaker
     });
     
     if (sorted.length <= 6) return sorted;

@@ -32,7 +32,7 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<bool> login(String email, String password, {bool redirect = true}) async {
     isLoading.value = true;
     try {
       final userProfile = await _authApi.login(email, password);
@@ -44,11 +44,13 @@ class AuthController extends GetxController {
         }
         currentUser.value = userProfile;
         
-        // Navigation based on role
-        if (userProfile.isAdmin || userProfile.isStaff) {
-          Get.offAllNamed(AppRoutes.ADMIN_DASHBOARD);
-        } else {
-          Get.offAllNamed(AppRoutes.CUSTOMER_HOME);
+        if (redirect) {
+          // Navigation based on role
+          if (userProfile.isAdmin || userProfile.isStaff) {
+            Get.offAllNamed(AppRoutes.ADMIN_DASHBOARD);
+          } else {
+            Get.offAllNamed(AppRoutes.CUSTOMER_HOME);
+          }
         }
         Get.snackbar('Success', 'Welcome back, ${userProfile.email}!', snackPosition: SnackPosition.BOTTOM);
         return true;
