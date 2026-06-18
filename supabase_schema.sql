@@ -35,6 +35,8 @@ create table if not exists public.products (
   category_id uuid references public.categories on delete set null,
   stock integer not null default 0 check (stock >= 0),
   sold_count integer not null default 0 check (sold_count >= 0),
+  rating numeric not null default 0 check (rating >= 0 and rating <= 5),
+  review_count integer not null default 0 check (review_count >= 0),
   image_urls text[] not null default '{}',
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
@@ -71,6 +73,19 @@ create table if not exists public.order_items (
 );
 
 alter table public.order_items enable row level security;
+
+-- 5.5 Product Reviews Table
+create table if not exists public.product_reviews (
+  id uuid default gen_random_uuid() primary key,
+  product_id uuid references public.products on delete cascade not null,
+  user_id uuid references public.profiles on delete cascade not null,
+  rating integer not null check (rating >= 1 and rating <= 5),
+  comment text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  unique(product_id, user_id)
+);
+
+alter table public.product_reviews enable row level security;
 
 -- 6. Activity Logs Table
 create table if not exists public.activity_logs (
@@ -214,6 +229,20 @@ create policy "Allow admins to create notifications" on public.notifications
     )
   );
 
+-- Product Reviews Policies
+create policy "Allow public read on product reviews" on public.product_reviews
+  for select using (true);
+
+create policy "Allow users to review purchased products" on public.product_reviews
+  for insert with check (
+    auth.uid() = user_id and
+    exists (
+      select 1 from public.orders o
+      join public.order_items oi on o.id = oi.order_id
+      where o.user_id = auth.uid() and oi.product_id = product_reviews.product_id and o.status = 'delivered'
+    )
+  );
+
 -- =========================================================================
 -- Trigger for automatic profile creation on user signup
 -- =========================================================================
@@ -234,20 +263,64 @@ create trigger on_auth_user_created
   for each row execute procedure public.handle_new_user();
 
 -- =========================================================================
--- Trigger for automatic product sold_count increment
+-- Trigger for automatic product sold_count increment on Delivery
 -- =========================================================================
-create or replace function public.increment_product_sold_count()
+create or replace function public.increment_product_sold_count_on_delivery()
 returns trigger as $$
+declare
+  item record;
 begin
-  update public.products
-  set sold_count = sold_count + new.quantity
-  where id = new.product_id;
+  if (old.status != 'delivered' and new.status = 'delivered') then
+    for item in select product_id, quantity from public.order_items where order_id = new.id loop
+      if item.product_id is not null then
+        update public.products
+        set sold_count = sold_count + item.quantity
+        where id = item.product_id;
+      end if;
+    end loop;
+  end if;
   return new;
 end;
 $$ language plpgsql security definer;
 
+-- Remove old order_items trigger if it exists
 drop trigger if exists on_order_item_created on public.order_items;
+drop trigger if exists on_order_delivered on public.orders;
 
-create trigger on_order_item_created
-  after insert on public.order_items
-  for each row execute procedure public.increment_product_sold_count();
+create trigger on_order_delivered
+  after update on public.orders
+  for each row execute procedure public.increment_product_sold_count_on_delivery();
+
+-- =========================================================================
+-- Trigger for automatic product rating calculation
+-- =========================================================================
+create or replace function public.update_product_rating()
+returns trigger as $$
+declare
+  pid uuid;
+  avg_rating numeric;
+  cnt integer;
+begin
+  if TG_OP = 'DELETE' then
+    pid := old.product_id;
+  else
+    pid := new.product_id;
+  end if;
+
+  select coalesce(avg(rating), 0), count(*) into avg_rating, cnt
+  from public.product_reviews
+  where product_id = pid;
+
+  update public.products
+  set rating = round(avg_rating, 1), review_count = cnt
+  where id = pid;
+
+  return null;
+end;
+$$ language plpgsql security definer;
+
+drop trigger if exists on_review_changed on public.product_reviews;
+
+create trigger on_review_changed
+  after insert or update or delete on public.product_reviews
+  for each row execute procedure public.update_product_rating();
