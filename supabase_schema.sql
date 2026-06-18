@@ -8,6 +8,7 @@ create table if not exists public.profiles (
   id uuid references auth.users on delete cascade primary key,
   email text not null,
   role text not null default 'customer' check (role in ('super_admin', 'admin', 'staff', 'customer')),
+  is_blocked boolean default false not null,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -210,8 +211,8 @@ create policy "Allow admins to create notifications" on public.notifications
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
-  insert into public.profiles (id, email, role)
-  values (new.id, new.email, 'customer');
+  insert into public.profiles (id, email, role, is_blocked)
+  values (new.id, new.email, 'customer', false);
   return new;
 end;
 $$ language plpgsql security definer;

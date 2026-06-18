@@ -13,6 +13,7 @@ import '../../categories/views/admin_categories_view.dart';
 import '../../orders/views/admin_orders_view.dart';
 import '../../activity_logs/views/admin_logs_view.dart';
 import '../../banners/views/admin_banners_view.dart';
+import '../../users/views/admin_users_view.dart';
 
 class AdminDashboardView extends GetView<AdminDashboardController> {
   const AdminDashboardView({super.key});
@@ -30,6 +31,10 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
       const AdminOrdersView(),
       const AdminBannersView(),
       if (isSuperAdmin)
+        const AdminUsersView()
+      else
+        const Center(child: Text('Unauthorized access')),
+      if (isSuperAdmin)
         const AdminLogsView()
       else
         const Center(child: Text('Unauthorized access')),
@@ -41,6 +46,8 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
       {'title': 'Categories', 'icon': Icons.category_outlined},
       {'title': 'Orders', 'icon': Icons.shopping_bag_outlined},
       {'title': 'Banners', 'icon': Icons.view_carousel_outlined},
+      if (isSuperAdmin)
+        {'title': 'Users', 'icon': Icons.people_alt_outlined},
       if (isSuperAdmin)
         {'title': 'Activity Logs', 'icon': Icons.history_edu_outlined},
     ];

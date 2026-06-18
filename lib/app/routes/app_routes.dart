@@ -16,4 +16,5 @@ class AppRoutes {
   static const String ADMIN_ORDERS = '/admin/orders';
   static const String ADMIN_CATEGORIES = '/admin/categories';
   static const String ADMIN_LOGS = '/admin/logs';
+  static const String ADMIN_USERS = '/admin/users';
 }

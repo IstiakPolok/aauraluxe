@@ -37,6 +37,11 @@ class AuthController extends GetxController {
     try {
       final userProfile = await _authApi.login(email, password);
       if (userProfile != null) {
+        if (userProfile.isBlocked) {
+          await _authApi.logout();
+          Get.snackbar('Account Blocked', 'Your account has been suspended. Please contact support.', snackPosition: SnackPosition.BOTTOM);
+          return false;
+        }
         currentUser.value = userProfile;
         
         // Navigation based on role

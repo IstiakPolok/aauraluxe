@@ -2,12 +2,14 @@ class UserProfile {
   final String id;
   final String email;
   final String role; // 'super_admin', 'admin', 'staff', 'customer'
+  final bool isBlocked;
   final DateTime createdAt;
 
   UserProfile({
     required this.id,
     required this.email,
     required this.role,
+    this.isBlocked = false,
     required this.createdAt,
   });
 
@@ -21,6 +23,7 @@ class UserProfile {
       id: json['id'] as String,
       email: json['email'] as String,
       role: json['role'] as String? ?? 'customer',
+      isBlocked: json['is_blocked'] as bool? ?? false,
       createdAt: json['created_at'] != null 
           ? DateTime.parse(json['created_at'] as String) 
           : DateTime.now(),
@@ -32,6 +35,7 @@ class UserProfile {
       'id': id,
       'email': email,
       'role': role,
+      'is_blocked': isBlocked,
       'created_at': createdAt.toIso8601String(),
     };
   }

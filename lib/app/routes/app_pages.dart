@@ -18,6 +18,7 @@ import '../modules/admin/products/views/admin_products_view.dart';
 import '../modules/admin/orders/views/admin_orders_view.dart';
 import '../modules/admin/categories/views/admin_categories_view.dart';
 import '../modules/admin/activity_logs/views/admin_logs_view.dart';
+import '../modules/admin/users/views/admin_users_view.dart';
 
 // Binding Imports
 import '../modules/auth/bindings/login_binding.dart';
@@ -34,6 +35,7 @@ import '../modules/admin/products/bindings/admin_products_binding.dart';
 import '../modules/admin/orders/bindings/admin_orders_binding.dart';
 import '../modules/admin/categories/bindings/admin_categories_binding.dart';
 import '../modules/admin/activity_logs/bindings/admin_logs_binding.dart';
+import '../modules/admin/users/bindings/admin_users_binding.dart';
 
 // Middleware for Role Guards
 class AuthGuard extends GetMiddleware {
@@ -171,6 +173,12 @@ class AppPages {
       page: () => const AdminLogsView(),
       binding: AdminLogsBinding(),
       middlewares: [SuperAdminGuard()], // Only Super Admin can view audit logs
+    ),
+    GetPage(
+      name: AppRoutes.ADMIN_USERS,
+      page: () => const AdminUsersView(),
+      binding: AdminUsersBinding(),
+      middlewares: [SuperAdminGuard()], // Only Super Admin can manage users
     ),
   ];
 }
