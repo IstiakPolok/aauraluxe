@@ -109,6 +109,7 @@ class ApiClient extends GetxService {
   Future<http.Response> get(
     String path, {
     Map<String, String>? queryParams,
+    bool showErrorSnackbar = true,
   }) async {
     final uri = _buildUri(path, queryParams);
     try {
@@ -116,7 +117,7 @@ class ApiClient extends GetxService {
       _checkResponse(response);
       return response;
     } catch (e) {
-      _handleError(e);
+      if (showErrorSnackbar) _handleError(e);
       rethrow;
     }
   }
@@ -125,6 +126,7 @@ class ApiClient extends GetxService {
     String path,
     dynamic body, {
     bool returnRepresentation = false,
+    bool showErrorSnackbar = true,
   }) async {
     final uri = _buildUri(path);
     try {
@@ -136,7 +138,7 @@ class ApiClient extends GetxService {
       _checkResponse(response);
       return response;
     } catch (e) {
-      _handleError(e);
+      if (showErrorSnackbar) _handleError(e);
       rethrow;
     }
   }
@@ -146,6 +148,7 @@ class ApiClient extends GetxService {
     dynamic body, {
     bool returnRepresentation = false,
     Map<String, String>? queryParams,
+    bool showErrorSnackbar = true,
   }) async {
     final uri = _buildUri(path, queryParams);
     try {
@@ -157,7 +160,7 @@ class ApiClient extends GetxService {
       _checkResponse(response);
       return response;
     } catch (e) {
-      _handleError(e);
+      if (showErrorSnackbar) _handleError(e);
       rethrow;
     }
   }
@@ -165,6 +168,7 @@ class ApiClient extends GetxService {
   Future<http.Response> delete(
     String path, {
     Map<String, String>? queryParams,
+    bool showErrorSnackbar = true,
   }) async {
     final uri = _buildUri(path, queryParams);
     try {
@@ -172,7 +176,7 @@ class ApiClient extends GetxService {
       _checkResponse(response);
       return response;
     } catch (e) {
-      _handleError(e);
+      if (showErrorSnackbar) _handleError(e);
       rethrow;
     }
   }

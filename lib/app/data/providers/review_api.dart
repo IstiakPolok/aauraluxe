@@ -40,6 +40,7 @@ class ReviewApi extends GetxService {
           'rating': rating,
           'comment': comment,
         },
+        showErrorSnackbar: false, // We will handle the error gracefully below
       );
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
