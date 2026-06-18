@@ -34,8 +34,11 @@ class AdminUsersController extends GetxController {
         final index = users.indexWhere((u) => u.id == userId);
         if (index != -1) {
           users[index] = updatedProfile;
+          users.refresh();
         }
         Get.snackbar('Success', 'User role updated successfully.');
+      } else {
+        Get.snackbar('Permission Denied', 'You do not have permission to update this user. (Check Supabase RLS)');
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to update user role: $e');
@@ -52,8 +55,11 @@ class AdminUsersController extends GetxController {
         final index = users.indexWhere((u) => u.id == userId);
         if (index != -1) {
           users[index] = updatedProfile;
+          users.refresh();
         }
         Get.snackbar('Success', updatedProfile.isBlocked ? 'User blocked successfully.' : 'User unblocked successfully.');
+      } else {
+        Get.snackbar('Permission Denied', 'You do not have permission to update this user. (Check Supabase RLS)');
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to update block status: $e');

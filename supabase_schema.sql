@@ -108,6 +108,14 @@ create policy "Allow public read on profiles" on public.profiles
 create policy "Allow users to update own profile" on public.profiles
   for update using (auth.uid() = id);
 
+create policy "Allow super_admin to update any profile" on public.profiles
+  for update using (
+    exists (
+      select 1 from public.profiles 
+      where id = auth.uid() and role = 'super_admin'
+    )
+  );
+
 create policy "Allow insert on profiles" on public.profiles
   for insert with check (true);
 
